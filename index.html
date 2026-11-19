@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kling 4.0 в 4К — срез 20 сцен</title>
+<style>
+:root{--bg:#fff;--ink:#111;--ink-3:#888;--line:#e4e4e4;--err:#c62828}
+@media (prefers-color-scheme: dark){:root{--bg:#111;--ink:#eee;--ink-3:#888;--line:#333;--err:#ef6b6b}}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,Inter,sans-serif}
+.w{min-height:100%;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+form{width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px}
+h1{font-size:17px;font-weight:600;margin:0 0 4px}
+input,button{font:inherit;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+button{background:var(--ink);color:var(--bg);border:0;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+#m{min-height:20px;font-size:13px;color:var(--ink-3)}#m.e{color:var(--err)}
+</style></head><body><div class="w"><form id="f" action="javascript:void 0" onsubmit="return false">
+<h1>Kling 4.0 в 4К — срез 20 сцен</h1>
+<input id="p" type="password" placeholder="Пароль" autocomplete="current-password" autofocus required>
+<button id="b" type="submit">Открыть</button><div id="m"></div>
+</form></div>
+<script>
+(()=>{
+const S="oSwt1RoTzTLf1bExpjg1Bw==",I="L+iQEsTXz9l+u/BM",N=600000,K="vmst-k-oSwt1RoT";
+const D=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function open_(key){
+  if(document.readyState!=="complete") await new Promise(r=>addEventListener("load",r,{once:true}));
+  const ct=D(document.getElementById("ct").textContent.trim());
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:D(I)},key,ct);
+  return new TextDecoder().decode(pt);
+}
+function show(html){document.open();document.write(html);document.close();}
+async function derive(pw){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt:D(S),iterations:N,hash:"SHA-256"},base,{name:"AES-GCM",length:256},true,["decrypt"]);
+}
+window.addEventListener("load",async()=>{let raw=null;try{raw=localStorage.getItem(K)}catch(e){}
+  if(raw){try{const k=await crypto.subtle.importKey("raw",D(raw),"AES-GCM",false,["decrypt"]);show(await open_(k));return}catch(e){try{localStorage.removeItem(K)}catch(_){}}}});
+document.getElementById("f").onsubmit=async e=>{e.preventDefault();
+  const m=document.getElementById("m"),bt=document.getElementById("b");m.className="";m.textContent="Проверяю…";bt.disabled=true;
+  try{const k=await derive(document.getElementById("p").value);
+    const raw=new Uint8Array(await crypto.subtle.exportKey("raw",k));
+    const html=await open_(k);
+    try{localStorage.setItem(K,btoa(String.fromCharCode(...raw)))}catch(_){}
+    show(html);
+  }catch(err){m.className="e";m.textContent="Неверный пароль";bt.disabled=false}};
+})();
+</script>
+<script id="ct" type="application/octet-stream">RHyXDf7wnUe/O1eepWci5P95SYCeh+IjSrM/9XnC6rY4MRzhji4lejoLQlfIWmZ98nsl5WRX4yDv9HF36oAX47iQj5i+qFbEnulszOgZ1kscUhstnwYefRTBtfoyfTE1FkuC6SdRmLYnfd4MVoJiv8xip2Rev1W9xocqfUS1sHa+OPzfLCgdBcFAGT7DR7HEANalQFxkgvG789V7/TsmGb/KbWI+9p+X2TobddSrPzISY3E2xLqzchhathdgjJAQ+HbOy0KJQ9J6V6qiCgeSRwaSnD23mg6Pp7sWV8pkDDjrc5Hr+YrD1B1bz+Utqg+KTHG/qCALnZ9m3bv6chayKJGS1y9iXOcI2BSYWDv+fdA3Vxm9gJcvZDJSYxZlG+RhQkaXnjWKB9m06YS1GiWtwm63mfYkBWflRIkMbzaS59dCVrPhkL0VtoXvpjbVb990R1fC83xmRr+H60JRWXcx4Y6Qm6mJwp6SrrlHnebzL4TmjLU8USVlEhk4QjNNM9FRKnOT94cw2IJbKQfUgDNfvhhYlNdNLf9/jk43KegXYxt9Fw+qb/7EI/DhJ64qem2+x7yIdVsnEydQ6yAT7mktcFVo</script>
+</body></html>
